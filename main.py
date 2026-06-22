@@ -1,3 +1,15 @@
+def show_total_expense():
+    total = 0
+    try:
+        with open('expense.txt', 'r') as file:
+            for line in file:
+                expense, category, description = line.strip().split(',')
+                total += int(expense)
+    except FileNotFoundError:
+        print("No File Found!!")
+        
+    return total
+
 def add_expense():
     try:
         expense = int(input("Enter Expense: "))
@@ -26,7 +38,8 @@ def view_expenses():
 while True:
     print("1. Add Expense")
     print("2. View Expense")
-    print("3. Exit")
+    print("3. Show Total Expense")
+    print("4. Exit")
     try:
         choice = int(input("Enter Your Choice: "))
     except ValueError:
@@ -37,6 +50,8 @@ while True:
     elif choice == 2:
         view_expenses()
     elif choice == 3:
+        print(f"The Total Expenses are {show_total_expense()}")
+    elif choice == 4:
         
         print("Goodbye")
         break
