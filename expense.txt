@@ -1,2 +1,3 @@
 200,Transport,Rapido
 25,Transport,Metro
+50,Food,Snacks
