@@ -1,9 +1,36 @@
 class ExpenseTracker:
 
+    def __init__(self):
+        self.filename = 'expense.txt'
+
+    def run(self):
+        while True:
+            print("1. Add Expense")
+            print("2. View Expense")
+            print("3. Show Total Expenses")
+            print("4. Exit")
+            try:
+                choice = int(input("Enter Your Choice: "))
+            except ValueError:
+                print("Please Enter Valid Value")
+                continue
+            if choice == 1:
+                self.add_expense()
+            elif choice == 2:
+                self.view_expenses()
+            elif choice == 3:
+                print(f"The Total Expenses are {self.show_total_expense()}")
+            elif choice == 4:
+                print("GoodBye!!")
+                break
+            else:
+                print("Enter Valid Choice")
+
+
     def show_total_expense(self):
         total = 0
         try:
-            with open('expense.txt', 'r') as file:
+            with open(self.filename, 'r') as file:
                 for line in file:
                     expense, category, description = line.strip().split(',')
                     total += int(expense)
@@ -20,7 +47,7 @@ class ExpenseTracker:
         except ValueError:
             print("Enter Valid Value")
             return
-        with open('expense.txt', 'a') as file:
+        with open(self.filename, 'a') as file:
             file.write(f"{expense},{category},{description}\n")
             print(f"The expense added is {expense}")
             print(f"The category added is {category}")
@@ -28,7 +55,7 @@ class ExpenseTracker:
 
     def view_expenses(self):
         try:
-            with open('expense.txt', 'r') as file:
+            with open(self.filename, 'r') as file:
                 for line in file:
                     expense, category, description = line.strip().split(',')
                     print(f"The expense is {expense}")
@@ -39,25 +66,4 @@ class ExpenseTracker:
             print("No Expense has been saved yet!!")
 
 tracker = ExpenseTracker()
-while True:
-    print("1. Add Expense")
-    print("2. View Expense")
-    print("3. Show Total Expense")
-    print("4. Exit")
-    try:
-        choice = int(input("Enter Your Choice: "))
-    except ValueError:
-        print("Please Enter valid value")
-        continue
-    if choice == 1:
-        tracker.add_expense()
-    elif choice == 2:
-        tracker.view_expenses()
-    elif choice == 3:
-        print(f"The Total Expenses are {tracker.show_total_expense()}")
-    elif choice == 4:
-        
-        print("Goodbye")
-        break
-    else:
-        print("Invalid Choice")
+tracker.run()
