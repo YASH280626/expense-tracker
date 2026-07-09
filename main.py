@@ -1,7 +1,7 @@
 class ExpenseTracker:
 
     def __init__(self):
-        self.filename = 'expense.txt'
+        self.filename = 'expense.csv'
 
     def run(self):
         while True:
@@ -25,7 +25,6 @@ class ExpenseTracker:
                 break
             else:
                 print("Enter Valid Choice")
-
 
     def show_total_expense(self):
         total = 0
