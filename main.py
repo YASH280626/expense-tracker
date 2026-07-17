@@ -23,7 +23,10 @@ class ExpenseTracker:
             print("2. View Transactions")
             print("3. Show Total Expenses")
             print("4. Show Total Income")
-            print("5. Exit")
+            print("5. Final Balance")
+            print("6. Update Transaction")
+            print("7. Delete Transaction")
+            print("8. Exit")
             try:
                 choice = int(input("Enter Your Choice: "))
             except ValueError:
@@ -38,11 +41,111 @@ class ExpenseTracker:
             elif choice == 4:
                 print(f"The Total Income is {self.show_total_income()}")
             elif choice == 5:
+                print(f"The Final Balance is {self.show_current_balance()}")
+            elif choice == 6:
+                self.update_transaction()
+            elif choice == 7:
+                self.delete_transaction()   
+            elif choice == 8:
                 print("Goodbye")
-                break
-                
+                break    
             else:
                 print("Enter Valid Choice")
+
+    def delete_transaction(self):
+        self.view_transactions()
+        try:
+            idd = int(input("Enter the Transaction ID to Delete: "))
+        except ValueError:
+            print("Please enter a valid ID.")
+            return
+
+        self.cursor.execute(
+            "Select * from Transactions where id = ?",
+            (idd,)
+        )
+        transaction = self.cursor.fetchone()
+        if transaction is None:
+            print("Transaction is not found.")
+            return
+
+        self.cursor.execute('''
+                        Delete from Transactions
+                        Where id = ?
+                        ''', (idd,)
+                        )
+        self.connection.commit()
+        if self.cursor.rowcount > 0:
+            print("Transaction Deleted Successfully.")
+        else:
+            print("Transaction deletion unsuccessful.")
+    
+    def update_transaction(self):
+        self.view_transactions()
+
+        try:
+            idd = int(input("Enter the Transaction ID to update: "))
+        except ValueError:
+            print("Please enter a valid ID.")
+            return
+
+    # Check whether the transaction exists
+        self.cursor.execute(
+            "SELECT * FROM Transactions WHERE id = ?",
+            (idd,)
+        )
+        
+        transaction = self.cursor.fetchone()
+
+        if transaction is None:
+            print("Transaction not found.")
+            return
+
+        try:
+            newdate = input("Enter the new Date: ")
+            newdescription = input("Enter the new Description: ")
+            newcategory = input("Enter the new Category: ")
+            newamount = float(input("Enter the new Amount: "))
+            new_transaction_type = input("Enter the new Transaction Type (Income/Expense): ")
+        except ValueError:
+            print("Please enter valid values.")
+            return
+
+        updated_transaction = (
+            newdate,
+            newdescription,
+            newcategory,
+            newamount,
+            new_transaction_type,
+            idd
+        )
+
+        self.cursor.execute(
+            '''
+            UPDATE Transactions
+            SET
+                Date = ?,
+                Description = ?,
+                Category = ?,
+                Amount = ?,
+                Type = ?
+            WHERE id = ?
+            ''',
+            updated_transaction
+        )
+
+        self.connection.commit()
+
+        if self.cursor.rowcount > 0:
+            print("Transaction updated successfully!")
+        else:
+            print("Transaction could not be updated.")
+
+    def show_current_balance(self):
+        tot_income = self.show_total_income()
+        tot_expense = self.show_total_expense()
+        return tot_income - tot_expense
+
 
     def show_total_expense(self):
         self.cursor.execute('''Select SUM(Amount)
